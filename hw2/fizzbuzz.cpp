@@ -6,6 +6,7 @@ using std::cin;
 
 int main(){
   int n;
+  cout<<"Please enter an integer"<<endl;
   cin>> n;
   if ((n%3==0)&&(n%5==0)){
     cout<<"Fizzbuzz!\n";
