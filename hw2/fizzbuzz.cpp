@@ -4,11 +4,14 @@ using std::cout;
 using std::endl;
 using std::cin;
 
-int main(){
+int read_number(){
   int n;
-  cout<<"Please enter an integer"<<endl;
-  cin>> n;
-  if ((n%3==0)&&(n%5==0)){
+  cin>>n;
+  return n;
+}
+  
+int main(){
+  if (int n = read_number(); (n%3==0)&&(n%5==0)){
     cout<<"Fizzbuzz!\n";
   }
   else if((n%3==0)&&(n%5!=0)){
