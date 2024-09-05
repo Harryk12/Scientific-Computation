@@ -1,3 +1,4 @@
+//Harry S Kang, hsk697, hkangt
 #include <iostream>
 
 using std::cout;
