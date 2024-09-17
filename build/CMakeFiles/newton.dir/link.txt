@@ -1,0 +1,1 @@
+/opt/intel/oneapi/compiler/2024.2/bin/icpx CMakeFiles/newton.dir/newton.cpp.o -o newton 

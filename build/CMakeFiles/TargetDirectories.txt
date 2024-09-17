@@ -1,0 +1,7 @@
+/home/hkangt/Scientific-Computation/build/CMakeFiles/newton.dir
+/home/hkangt/Scientific-Computation/build/CMakeFiles/edit_cache.dir
+/home/hkangt/Scientific-Computation/build/CMakeFiles/rebuild_cache.dir
+/home/hkangt/Scientific-Computation/build/CMakeFiles/list_install_components.dir
+/home/hkangt/Scientific-Computation/build/CMakeFiles/install.dir
+/home/hkangt/Scientific-Computation/build/CMakeFiles/install/local.dir
+/home/hkangt/Scientific-Computation/build/CMakeFiles/install/strip.dir
