@@ -27,8 +27,8 @@ int main() {
 
 
 
-  //following is actually calling numbers up to 10000 (larger than 4th perfect number)
-  auto numbers = iota(1, 10000);
+  //following is actually calling numbers up to 9000 (larger than 4th perfect number)
+  auto numbers = iota(1, 9000);
   for_each(numbers | filter([sum] (int number) -> bool {    //filters such that sum of factors equal number- does so by calling sum lambda exp.
     return sum(number) == number;
   }), [] (int number) {    //boolean above choses which of the numbers to display (number here is sent into the lambda exp. above and becomes numbercandidate
