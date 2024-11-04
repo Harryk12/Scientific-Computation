@@ -1,5 +1,5 @@
 cmake_minimum_required( VERSION 3.20 )
-project(PASCAL VERSION 1.0)
+project(Pascal VERSION 1.0)
 
 message( "Using sources: newton-complex.cpp" )
 add_executable( newton-complex )
