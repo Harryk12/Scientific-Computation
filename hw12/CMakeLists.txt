@@ -5,5 +5,5 @@ message( "Using sources: abctuple.cpp" )
 add_executable( abctuple )
 target_sources( abctuple PRIVATE abctuple.cpp )
 
-target_compile_features( abctuple PRIVATE cxx_std_17 )
+target_compile_features( abctuple PRIVATE cxx_std_20 )
 install( TARGETS halfway DESTINATION . )
