@@ -32,9 +32,10 @@ class Person{
 private:
   string status;
   int day;
+  int dayofinfection;
 public:
   Person()
-    : day(0),status("susceptible"){};
+    : day(0),status("susceptible"),dayofinfection(){};
   string status_string(){   //returns person's state as string
     return status;
   };
@@ -42,17 +43,25 @@ public:
     day=day+1;
   };
   void infect(Disease s) {
-    int startdate=day;
-    int startdatestored=startdate;
+    ////int startdate=day;
+    //int startdatestored=startdate;
+    ////int numdaysleft=s.get_days();
     double r = ((double) rand() / (RAND_MAX));
-    if (day<(startdatestored+s.get_days())){
-      if (r<s.get_transmission()){
+    //if (day<(startdate+s.get_days())){
+    ////if (numdaysleft>0){
+    if(r<s.get_transmission() && status=="susceptible"){
+      dayofinfection=day;
+    };
+    if (r<s.get_transmission()){
+      if (day<s.get_days()+dayofinfection){
 	//if not vaccinated
 	status="sick";
+     
+        //startdate=startdate+1;
+        ////numdaysleft=numdaysleft-1;
+      }else{    //if (day==startdatestored+s.get_days()){    //%% status==sick
+	status="recovered";
       };
-      //startdate=startdate+1;
-    }else{    //if (day==startdatestored+s.get_days()){    //%% status==sick
-      status="recovered";
     };
   };
   bool is_recovered(){
@@ -108,7 +117,7 @@ int main(){
     if(step>3){
       joe.infect(fever);
     };
-    cout << "On day " << step << ", Joe is "<< joe.status_string() << endl;
+    cout << "On day " << step << ", Joe is "<< joe.status_string() <<endl;
     if (joe.is_recovered())
       break;
   };
