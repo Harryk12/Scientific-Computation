@@ -104,6 +104,66 @@ void JacobiSolve2( MatrixType A,VectorType sol,VectorType rhs ) {
   }
 }
 
+template < typename MatrixType, typename VectorType >
+void JacobiSolve3( MatrixType A, VectorType sol, VectorType rhs) {
+  auto tmp{sol};
+  int siz=A.rows();
+  for (auto& v : sol )
+    v=1;
+  Vector<double,5>xnew;
+  int it=0;
+  while (true){
+    auto stored=sol;
+    for (int i=0;i<siz;i++){
+      double sum=0.;
+      for (int j=0;j<siz;j++){
+	if (j!=i){
+	  sum=sum+(A(i,j)*sol(j));
+	};
+      };
+      xnew(i)=(rhs(i)-sum)/A(i,i);
+    };
+    sol=xnew;
+    cout<<"it: "<<it<<'\n'<<sol<<'\n';
+    it=it+1;
+    if((sol-stored).norm()<1.e-2){
+      break;
+    }
+  };
+};
+
+
+template < typename MatrixType, typename VectorType >
+void JacobiSolve4( MatrixType Anew, VectorType solnew, VectorType rhsnew) {
+  auto tmp{solnew};
+  int size=Anew.rows();
+  for (auto& v : solnew )
+    v=1;
+  Vector<double,7>xnew2;
+  int it=0;
+  while (true){
+    auto stored=solnew;
+    for (int i=0;i<size;i++){
+      double sum=0.;
+      for (int j=0;j<size;j++){
+	if (j!=i){
+	  sum=sum+(Anew(i,j)*solnew(j));
+	};
+      };
+      xnew2(i)=(rhsnew(i)-sum)/Anew(i,i);
+    };
+    solnew=xnew2;
+    cout<<"it: "<<it<<'\n'<<solnew<<'\n';
+    it=it+1;
+    if((solnew-stored).norm()<1.e-4){
+      break;
+    }
+  };
+};
+
+
+
+
 int main()
 {
 
@@ -147,7 +207,28 @@ int main()
   cout << "================ Solve 2\n";
   JacobiSolve2( A,sol,rhs );
   cout << "================ Solve until a certain precision\n";
-  //JacobiSolve3( A,sol,rhs );
+  JacobiSolve3( A,sol,rhs );
+
+
+  const int size=7;
+  Matrix<double,size,size> Anew;
+  Vector<double,size> solnew,rhsnew,tmpnew;
+
+  for ( auto& v : rhsnew )
+    v = 1.;
+  //cout << rhs << '\n';
+
+  for ( auto row : iota(0,size) ) {
+    solnew(row) = static_cast<double>( row );
+    Anew(row,row) = size;
+    for ( auto col : iota(0,size) ) {
+      if (row==col) continue;
+      Anew(row,col) = -1;
+    }
+  }
+
+  cout << "================ Solve until a certain precision varying matrix size\n";
+  JacobiSolve4( Anew,solnew,rhsnew );
 
   Matrix<float,Dynamic,Dynamic> Af(20,20);
   // or: MatrixXf Af(20,20);
