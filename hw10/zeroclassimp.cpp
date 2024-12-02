@@ -3,12 +3,18 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+polynomial::polynomial(std::vector<double>c){
+  if (c[0]==0.0){
+    throw std::invalid_argument("Zeroth coefficient has to be non-zero.");
+  };
+  coefficients=c;
+};
 //odd testing function
 bool polynomial::is_odd() const{
-  if(coefficients.size()%2==0){
-    return 0;
+  if(coefficients.size()%2==0){ //odd functions have even number of coeff
+    return true;
   }else{
-    return 1;
+    return false;
   };
 };
 //evaluation at a certain point 
@@ -16,9 +22,9 @@ double polynomial::evaluate_at(double x) const{
   double multiplier=1;
   double sum=0;
   for (int i=0;i<coefficients.size();i++){  //for loop to multiply by degrees of x
-    double val=multiplier*coefficients[i];
+    double val=multiplier*coefficients[(coefficients.size()-(i+1))];  //going backwards using the coefficients
     sum=sum+val;
-    multiplier=multiplier*x;
+    multiplier=multiplier*x;   //increasing order
   };
   return sum;
 };
@@ -54,7 +60,7 @@ void find_initial_bounds( const polynomial& p, double& left, double& right){
     };
   };
 };
-void move_bounds_closer( const polynomial& p,double& left,double& right){
+void move_bounds_closer( const polynomial& p,double& left,double& right,bool trace){
   double midpoint=.5*(left+right);   //use midpoints and reassigning bounds for bisection
   if (p(midpoint)*p(right)>0){
     right=midpoint;
@@ -63,7 +69,7 @@ void move_bounds_closer( const polynomial& p,double& left,double& right){
   };
 };
 //call function to find the zero
-double find_zero( const polynomial& p,double precision){
+double find_zero( const polynomial& p,double precision,bool trace){
   double leftval=8;   //initial random guesses
   double rightval=12;
   find_initial_bounds(p,leftval,rightval);

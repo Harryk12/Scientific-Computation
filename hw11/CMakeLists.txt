@@ -6,4 +6,4 @@ add_executable( newton-root )
 target_sources( newton-root PRIVATE newton-root.cpp )
 
 target_compile_features( newton-root PRIVATE cxx_std_17 )
-install( TARGETS halfway DESTINATION . )
+install( TARGETS newton-root DESTINATION . )
