@@ -14,6 +14,6 @@ public:
 
 void find_initial_bounds( const polynomial&,double &left,double &right);
 
-void move_bounds_closer( const polynomial& p,double& left,double& right,bool trace=false );
+void move_bounds_closer( const polynomial&,double& left,double& right,bool trace=false );
 
 double find_zero( const polynomial&,double precision,bool trace=false );
