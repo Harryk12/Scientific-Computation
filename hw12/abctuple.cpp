@@ -78,7 +78,7 @@ int main() {
 
 
   //testing the code with the sunk use case
-  auto sunk = quadratic(1.,0.,-2);
+  auto sunk = quadratic(2.,0.,0.);
   auto [a,b,c] = sunk;
   cout << "coefficients: " << a << "," << b << ',' << c << '\n';
 
@@ -94,7 +94,9 @@ int main() {
   //seeing if abc_roots works
   auto roots = abc_roots( sunk );
   auto [xplus,xminus] = roots;
-  cout << xplus << "," << xminus << '\n';
+  if (how_many_roots(sunk)=="two"){
+    cout << xplus << "," << xminus << '\n';
+  };
   //seeing if variant structure works
   auto root_cases = abc_cases( sunk );
   switch (root_cases.index()) {
