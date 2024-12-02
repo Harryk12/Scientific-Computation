@@ -78,7 +78,7 @@ int main() {
 
 
   //testing the code with the sunk use case
-  auto sunk = quadratic(2.,0.,0.);
+  auto sunk = quadratic(1.,0.,-2.);
   auto [a,b,c] = sunk;
   cout << "coefficients: " << a << "," << b << ',' << c << '\n';
 
