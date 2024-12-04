@@ -43,9 +43,10 @@ private:
   string status;
   int day;
   int daysleft;
+  int touchcounter;
 public:
   Person()
-    : day(0),status("susceptible"),daysleft(){};
+    : day(1),status("susceptible"),daysleft(-1),touchcounter(0){};
   int get_days_sick_left(){
     if (status=="sick"){
       return daysleft+1;
@@ -58,6 +59,13 @@ public:
   };
   void one_more_day(){     //update person's status to next day
     day=day+1;
+    if (daysleft==0){
+      status="recovered";
+    };
+    if (daysleft>0){
+      status="sick";
+      daysleft=daysleft-1;
+    };
   };
   void infect(Disease s) {
     ////int startdate=day;
@@ -69,18 +77,18 @@ public:
     if(r<s.get_transmission() && status=="susceptible"){
       daysleft=s.get_days();
     };
-    if (r<s.get_transmission()){
-      if (daysleft>0){
-	//if not vaccinated
-	status="sick";
+    //if (r<s.get_transmission()){
+    //if (daysleft>0){
+	//////if not vaccinated
+	//status="sick";
      
-        //startdate=startdate+1;
-        ////numdaysleft=numdaysleft-1;
-	daysleft=daysleft-1;
-      }else{    //if (day==startdatestored+s.get_days()){    //%% status==sick
-	status="recovered";
-      };
-    };
+        ////////startdate=startdate+1;
+        /////numdaysleft=numdaysleft-1;
+	//daysleft=daysleft-1;   updating now
+    //}else{    //if (day==startdatestored+s.get_days()){    //%% status==sick
+    //	status="recovered";
+    //};
+    //};
   };
   bool is_recovered(){
     if(status=="recovered"){
@@ -91,13 +99,20 @@ public:
   };
 
   void touch(Person i,Disease s){
-    if(i.status_string()=="sick"){
-      infect(s);
-      //status="sick";
+    touchcounter=touchcounter+1;
+    if (touchcounter<=6){
+      if(status=="susceptible"){
+	if(i.status_string()=="sick"){
+	  infect(s);
+	  //status="sick";
+	};
+      };
     };
   };
 
-  
+  void vaccinate(){
+    status="vaccinated";
+  };
   //void get_infected(){
   void get_vaccinated(){
 
@@ -131,8 +146,19 @@ public:
       per.infect(fever);
     };
   };
-  void random_vaccination(){
-    
+  void random_vaccination(double initial_vaccination){
+    double num=numberpeople*initial_vaccination;
+    int numpeoplevaccinated=static_cast<int>(num);
+    srand(static_cast<unsigned>(time(0)));
+    set<int>indices;
+    while (indices.size()<numpeoplevaccinated){
+      int index=rand() % people.size();
+      indices.insert(index);
+    };
+    for (int i:indices){
+      Person& per=people[i];
+      per.vaccinate();
+    };
   };
   int count_infected(){
     int count=0;
@@ -144,14 +170,20 @@ public:
     return count;
   };
   int count_vaccinated(){
-    return 0;
+    int count=0;
+    for (Person& p:people){
+      if(p.status_string()=="vaccinated"){
+	count=count+1;
+      };
+    };
+    return count;
   };
   void one_more_day(){
     for (Person& p:people){
       p.one_more_day();
     };
   };
-  vector<Person>get_people(){
+  vector<Person>& get_people(){
     return people;
   };
 };
@@ -161,21 +193,22 @@ int main(){
   Person joe;
   Disease fever(3,.9);
   for ( int step = 1; step<=10; ++step ) {
-    joe.one_more_day();
-    if(step>3){
+    //joe.one_more_day();
+    if(step==3){
       joe.infect(fever);
     };
     cout << "On day " << step << ", Joe is "<< joe.status_string() <<"("<<joe.get_days_sick_left()<<")"<<endl;
     if (joe.is_recovered())
       break;
+    joe.one_more_day();
   };
   //population test
   Population population(15);
   double initial_infect=.7;
   //population.random_infection(fever,initial_infect);
   for (int iter=1; iter<=10; ++iter){
-    population.one_more_day();
-    if (iter>3){
+    //population.one_more_day();
+    if (iter==3){    //>
       population.random_infection(fever,initial_infect);
     };
     int countnuminfected=population.count_infected();
@@ -191,38 +224,115 @@ int main(){
     if (iter>3 &&countnuminfected==0){
       cout<<"Disease ran its course by step "<< iter<<endl;
       break;
-    }
+    };
+    population.one_more_day();
   };
   //sanity tests
   Population population2(10);
-  vector<Person> people2=population2.get_people();
-  Person firstperson=people2[0];
+  vector<Person>& people2=population2.get_people();
+  //vector<Person> people2=population2.get_people();
+  Person& firstperson=people2[0];
+  //firstperson=people2[0];
   Disease flu2(3,1.);
-  firstperson.infect(flu2);
+  //////firstperson.infect(flu2);
+  //population2.one_more_day();
   int countnuminfected2=population2.count_infected();
   cout<<countnuminfected2<<endl;
-  #if 0
-  for (int iter2=1;iter2<=10;++iter2){
-    population2.one_more_day();
-    //firstperson.infect(flu2);
-    int iterator=0;
-    for (Person& invid2:people2){
-      if(people2[iterator].status_string()=="sick"){
-	people2[iterator].infect(flu2);
-      } else{
-	if(iterator+1<people2.size() && people2[iterator+1].status_string()=="sick"){
-	  invid2.touch(people2[iterator+1],flu2);
-	};
-	if (iterator>0 && people2[iterator-1].status_string()=="sick"){
-	  invid2.touch(people2[iterator-1],flu2);
+  //#if 0
+  for (int iter2=0;iter2<15;++iter2){
+    //population2.one_more_day();
+    //////firstperson.infect(flu2);
+    if (iter2==0){
+      firstperson.infect(flu2);
+    } else{
+      for (int p=0;p<people2.size();p++){
+	if (people2[p].status_string()=="susceptible"){
+	  if (p+1<people2.size() && people2[p+1].status_string()=="sick"){       //
+	    people2[p].infect(flu2);
+	  };
+	  if (p>0 && people2[p-1].status_string()=="sick"){       //
+	    people2[p].infect(flu2);
+	  };
 	};
       };
-      iterator++;
     };
     int countnuminfected2=population2.count_infected();
-    cout<<"On iteration "<<iter2<<" there are "<<countnuminfected2<<" infected."<<endl;
+    if (iter2>0){
+      cout<<"On iteration "<<iter2<<" there are "<<countnuminfected2<<" infected."<<endl;
+    };
+    population2.one_more_day();
   };
-  #endif
+
+  //vaccinated test
+  Population population3(10);
+  double randvacc=.3;
+  population3.random_vaccination(randvacc);
+  cout<<"Number of people vaccinated: "<<population3.count_vaccinated()<<endl;
+  vector<Person>& people3=population3.get_people();
+  Person& nperson=people3[0];
+  Disease flu3(3,1.);
+  int countnuminfected3=population3.count_infected();
+  cout<<countnuminfected3<<endl;
+  for (int iter3=0;iter3<15;++iter3){
+    //population2.one_more_day();
+    //////firstperson.infect(flu2);
+    if (iter3==0){
+      nperson.infect(flu3);
+    } else{
+      for (int p=0;p<people3.size();p++){
+	if (people3[p].status_string()=="susceptible"){
+	  if (p+1<people3.size() && people3[p+1].status_string()=="sick"){     
+	    people3[p].infect(flu3);
+	  };
+	  if (p>0 && people3[p-1].status_string()=="sick"){        
+	    people3[p].infect(flu3);
+	  };
+        };
+      };
+    };
+    int countnuminfected3=population3.count_infected();
+    if (iter3>0){
+      cout<<"On iteration "<<iter3<<" there are "<<countnuminfected3<<" infected."<<endl;
+    };
+    population3.one_more_day();
+  };
+
+
+
+  //random interations
+  Population population4(100);
+  double randvac=.3;
+  population4.random_vaccination(randvac);
+  cout<<"Number of people vaccinated: "<<population3.count_vaccinated()<<endl;
+  vector<Person>& people4=population4.get_people();
+  Person& nthperson=people4[0];
+  Disease flu4(3,1.);
+  //int countnuminfected4=population4.count_infected();
+  //cout<<countnuminfected4<<endl;
+  for (int iter4=0;iter4<15;++iter4){
+    //population2.one_more_day();
+    //////firstperson.infect(flu2);
+    if (iter4==0){
+      nthperson.infect(flu4);
+    } else{
+      for (int p=0;p<people4.size();p++){
+	//if (people3[p].status_string()=="susceptible"){
+	if (p+1<people4.size()){     //&& people3[p+1].status_string()=="sick"
+	  people4[p].touch(people4[p+1],flu4);
+        };
+        if (p>0){        //&& people3[p-1].status_string()=="sick"
+          people4[p].touch(people4[p-1],flu4);
+        };
+        //};
+      };
+    };
+    int countnuminfected4=population4.count_infected();
+    if (iter4>0){
+      cout<<"On iteration "<<iter4<<" there are "<<countnuminfected3<<" infected."<<endl;
+    };
+    population4.one_more_day();
+  };
+  //#endif
       
   return 0;
 };
