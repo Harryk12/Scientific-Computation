@@ -97,10 +97,17 @@ public:
       return false;
     };
   };
+  void update_counter(){
+    touchcounter=touchcounter+1;
+  };
+  int get_touch_counter(){
+    return touchcounter;
+  };
 
   void touch(Person i,Disease s){
-    touchcounter=touchcounter+1;
-    if (touchcounter<=6){
+    if (touchcounter<6 && i.get_touch_counter()<6){
+      touchcounter=touchcounter+1;
+      i.update_counter();
       if(status=="susceptible"){
 	if(i.status_string()=="sick"){
 	  infect(s);
@@ -301,17 +308,45 @@ int main(){
 
   //random interations
   Population population4(100);
-  double randvac=.3;
+  double randvac=.1;
   population4.random_vaccination(randvac);
   cout<<"Number of people vaccinated: "<<population3.count_vaccinated()<<endl;
   vector<Person>& people4=population4.get_people();
-  Person& nthperson=people4[0];
+  Person& nthperson=people4[1];
   Disease flu4(3,1.);
   //int countnuminfected4=population4.count_infected();
   //cout<<countnuminfected4<<endl;
-  for (int iter4=0;iter4<15;++iter4){
-    //population2.one_more_day();
+  for (int iter4=0;iter4<100;++iter4){
+    if (iter4==0){
+      nthperson.infect(flu4);
+    }else{
+      int indexiter=0;
+      for (Person& indiv:people4){
+	while(indiv.get_touch_counter()<6){ 
+	  srand(time(0));
+	  int rindex=rand()%100;
+	  if (rindex!=indexiter){
+	    indiv.touch(people4[rindex],flu4);
+	  };
+	};
+	indexiter++;
+      };
+    };
+    int countnuminfected4=population4.count_infected();
+    if (iter4>0){
+      cout<<"On iteration "<<iter4<<" there are "<<countnuminfected3<<" infected."<<endl;
+    };
+    population4.one_more_day();
+  };
+	
+    //////population2.one_more_day();
     //////firstperson.infect(flu2);
+    //while(population4.peopletouchedceiling()<100)
+      
+
+    
+
+    #if 0
     if (iter4==0){
       nthperson.infect(flu4);
     } else{
@@ -331,8 +366,9 @@ int main(){
       cout<<"On iteration "<<iter4<<" there are "<<countnuminfected3<<" infected."<<endl;
     };
     population4.one_more_day();
+    
   };
-  //#endif
+  #endif
       
   return 0;
 };
