@@ -103,16 +103,22 @@ public:
   int get_touch_counter(){
     return touchcounter;
   };
+  void reset_touch_counter(){
+    touchcounter=0;
+  };
 
   void touch(Person i,Disease s){
-    if (touchcounter<6 && i.get_touch_counter()<6){
+    if (touchcounter<6){
       touchcounter=touchcounter+1;
-      i.update_counter();
-      if(status=="susceptible"){
-	if(i.status_string()=="sick"){
-	  infect(s);
-	  //status="sick";
-	};
+      if (i.get_touch_counter()<6){
+	i.update_counter();
+      };
+      if(status=="susceptible" && i.status_string()=="sick"){
+	infect(s);
+	//status="sick";
+      };
+      if(i.status_string()=="susceptible" && status=="sick"){
+	i.infect(s);
       };
     };
   };
@@ -243,8 +249,8 @@ int main(){
   Disease flu2(3,1.);
   //////firstperson.infect(flu2);
   //population2.one_more_day();
-  int countnuminfected2=population2.count_infected();
-  cout<<countnuminfected2<<endl;
+  //int countnuminfected2=population2.count_infected();
+  //cout<<countnuminfected2<<endl;
   //#if 0
   for (int iter2=0;iter2<15;++iter2){
     //population2.one_more_day();
@@ -278,8 +284,8 @@ int main(){
   vector<Person>& people3=population3.get_people();
   Person& nperson=people3[0];
   Disease flu3(3,1.);
-  int countnuminfected3=population3.count_infected();
-  cout<<countnuminfected3<<endl;
+  //int countnuminfected3=population3.count_infected();
+  //cout<<countnuminfected3<<endl;
   for (int iter3=0;iter3<15;++iter3){
     //population2.one_more_day();
     //////firstperson.infect(flu2);
@@ -310,33 +316,43 @@ int main(){
   Population population4(100);
   double randvac=.1;
   population4.random_vaccination(randvac);
-  cout<<"Number of people vaccinated: "<<population3.count_vaccinated()<<endl;
+  cout<<"Number of people vaccinated: "<<population4.count_vaccinated()<<endl;
   vector<Person>& people4=population4.get_people();
-  Person& nthperson=people4[1];
+  Person& nthperson=people4[11];
   Disease flu4(3,1.);
+
+  //////////////////nthperson.infect(flu4);
+  //population4.one_more_day();
   //int countnuminfected4=population4.count_infected();
   //cout<<countnuminfected4<<endl;
+  srand(time(0));
   for (int iter4=0;iter4<100;++iter4){
     if (iter4==0){
       nthperson.infect(flu4);
     }else{
       int indexiter=0;
+      //int rindex;
+      //srand(time(0));
       for (Person& indiv:people4){
-	while(indiv.get_touch_counter()<6){ 
-	  srand(time(0));
+	while((indiv.get_touch_counter())<6){ 
+	  //srand(time(0));
 	  int rindex=rand()%100;
 	  if (rindex!=indexiter){
 	    indiv.touch(people4[rindex],flu4);
 	  };
 	};
-	indexiter++;
+	indexiter=indexiter+1;
       };
     };
-    int countnuminfected4=population4.count_infected();
-    if (iter4>0){
-      cout<<"On iteration "<<iter4<<" there are "<<countnuminfected3<<" infected."<<endl;
-    };
     population4.one_more_day();
+    int countnuminfected4=population4.count_infected();
+    if (iter4>=0){
+      cout<<"On iteration "<<iter4<<" there are "<<countnuminfected4<<" infected."<<endl;
+    };
+    for (Person& indivs:people4){
+      indivs.reset_touch_counter();
+    };
+    //population4.one_more_day();
   };
 	
     //////population2.one_more_day();
@@ -346,7 +362,7 @@ int main(){
 
     
 
-    #if 0
+#if 0
     if (iter4==0){
       nthperson.infect(flu4);
     } else{
@@ -368,7 +384,7 @@ int main(){
     population4.one_more_day();
     
   };
-  #endif
+#endif
       
   return 0;
 };
