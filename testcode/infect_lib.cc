@@ -65,7 +65,7 @@ public:
       daysleft=s.get_days();
 
       transmissioncounter++;
-      if (transmissioncounter>=2000){
+      if (transmissioncounter>=20000){
 	if (variantcounter<3){
 	  variantcounter++;
 	};
@@ -85,6 +85,9 @@ public:
     //};
     //};
   };
+  void initial_infect(Disease s){
+    daysleft=s.get_days();
+  };
   bool is_recovered(){
     if(status=="recovered"){
       return true;
@@ -103,7 +106,7 @@ public:
   };
 
   void touch(Person i){    //Disease s
-    Disease s(5,.81);
+    Disease s(10,.1);
     if (touchcounter<6){
       touchcounter=touchcounter+1;
       if (i.get_touch_counter()<6){

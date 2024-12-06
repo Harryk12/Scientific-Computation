@@ -26,10 +26,10 @@ int transmissioncounter=0;
 int main(){
 //One person status test
   Person joe;
-  Disease fever(3,1.);
+  Disease flu(3,1.);
   for ( int step = 1; step<=10; ++step ) {
     if(step==3){
-      joe.infect(fever);
+      joe.infect(flu);
     };
     cout << "On day " << step << ", Joe is "<< joe.status_string();
     if(joe.status_string()=="sick"){
