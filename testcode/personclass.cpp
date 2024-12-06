@@ -24,17 +24,25 @@ private:
   int num_days_stay_sick;
   double chance_of_transmission;
 public:
+  int variantcount=1;
+  int transmissioncount=0;
   Disease(int numdayssick, double transferprobability)
-    : num_days_stay_sick(numdayssick), chance_of_transmission(transferprobability) {};
+    : num_days_stay_sick(numdayssick), chance_of_transmission(transferprobability) {
+    transmissioncount++;
+    if (transmissioncount>=5){
+      variantcount++;
+      transmissioncount=0;
+    };
+  };
   int get_days(){
     return num_days_stay_sick;
   };
   double get_transmission(){
     return chance_of_transmission;
   };
-  void touch(){
+  //void touch(){
     //
-  };
+  //};
 };
 
 
@@ -46,7 +54,7 @@ private:
   int touchcounter;
 public:
   Person()
-    : day(1),status("susceptible"),daysleft(-1),touchcounter(0){};
+    : day(1),status("susceptible"),daysleft(-1),touchcounter(0){}; //srand(time(0));
   int get_days_sick_left(){
     if (status=="sick"){
       return daysleft+1;
@@ -71,6 +79,7 @@ public:
     ////int startdate=day;
     //int startdatestored=startdate;
     ////int numdaysleft=s.get_days();
+    /////srand(time(0));
     double r = ((double) rand() / (RAND_MAX));
     //if (day<(startdate+s.get_days())){
     ////if (numdaysleft>0){
@@ -107,17 +116,19 @@ public:
     touchcounter=0;
   };
 
-  void touch(Person i,Disease s){
+  void touch(Person i){    //Disease s
     if (touchcounter<6){
       touchcounter=touchcounter+1;
       if (i.get_touch_counter()<6){
 	i.update_counter();
       };
       if(status=="susceptible" && i.status_string()=="sick"){
+	Disease s(5,.81);
 	infect(s);
 	//status="sick";
       };
       if(i.status_string()=="susceptible" && status=="sick"){
+	Disease s(5,.81);    //got to update this
 	i.infect(s);
       };
     };
@@ -246,7 +257,7 @@ int main(){
   //vector<Person> people2=population2.get_people();
   Person& firstperson=people2[0];
   //firstperson=people2[0];
-  Disease flu2(3,1.);
+  Disease flu2(3,.9);
   //////firstperson.infect(flu2);
   //population2.one_more_day();
   //int countnuminfected2=population2.count_infected();
@@ -283,7 +294,7 @@ int main(){
   cout<<"Number of people vaccinated: "<<population3.count_vaccinated()<<endl;
   vector<Person>& people3=population3.get_people();
   Person& nperson=people3[0];
-  Disease flu3(3,1.);
+  Disease flu3(3,.9);
   //int countnuminfected3=population3.count_infected();
   //cout<<countnuminfected3<<endl;
   for (int iter3=0;iter3<15;++iter3){
@@ -313,20 +324,20 @@ int main(){
 
 
   //random interations
-  Population population4(100);
+  Population population4(10000);
   double randvac=.1;
   population4.random_vaccination(randvac);
   cout<<"Number of people vaccinated: "<<population4.count_vaccinated()<<endl;
   vector<Person>& people4=population4.get_people();
   Person& nthperson=people4[11];
-  Disease flu4(3,1.);
+  Disease flu4(5,.85);
 
   //////////////////nthperson.infect(flu4);
   //population4.one_more_day();
   //int countnuminfected4=population4.count_infected();
   //cout<<countnuminfected4<<endl;
   srand(time(0));
-  for (int iter4=0;iter4<100;++iter4){
+  for (int iter4=0;iter4<40;++iter4){
     if (iter4==0){
       nthperson.infect(flu4);
     }else{
@@ -336,9 +347,9 @@ int main(){
       for (Person& indiv:people4){
 	while((indiv.get_touch_counter())<6){ 
 	  //srand(time(0));
-	  int rindex=rand()%100;
+	  int rindex=rand()%10000;
 	  if (rindex!=indexiter){
-	    indiv.touch(people4[rindex],flu4);
+	    indiv.touch(people4[rindex]);    //flu4
 	  };
 	};
 	indexiter=indexiter+1;
@@ -352,6 +363,10 @@ int main(){
     for (Person& indivs:people4){
       indivs.reset_touch_counter();
     };
+
+
+
+    
     //population4.one_more_day();
   };
 	
