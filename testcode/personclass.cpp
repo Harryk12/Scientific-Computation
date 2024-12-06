@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -18,22 +19,18 @@ using std::rand;
 using std::time;
 using std::set;
 
+int variantcounter=1;
+int transmissioncounter=0;
 
 class Disease{
 private:
   int num_days_stay_sick;
   double chance_of_transmission;
 public:
-  int variantcount=1;
-  int transmissioncount=0;
+  //int variantcount=1;
+  //int transmissioncount=0;
   Disease(int numdayssick, double transferprobability)
-    : num_days_stay_sick(numdayssick), chance_of_transmission(transferprobability) {
-    transmissioncount++;
-    if (transmissioncount>=5){
-      variantcount++;
-      transmissioncount=0;
-    };
-  };
+    : num_days_stay_sick(numdayssick), chance_of_transmission(transferprobability) {};
   int get_days(){
     return num_days_stay_sick;
   };
@@ -52,9 +49,10 @@ private:
   int day;
   int daysleft;
   int touchcounter;
+  int statuscount;    //didnt have
 public:
   Person()
-    : day(1),status("susceptible"),daysleft(-1),touchcounter(0){}; //srand(time(0));
+    : day(1),status("susceptible"),daysleft(-1),touchcounter(0),statuscount(0){srand(time(0));}; //srand(time(0));
   int get_days_sick_left(){
     if (status=="sick"){
       return daysleft+1;
@@ -69,6 +67,7 @@ public:
     day=day+1;
     if (daysleft==0){
       status="recovered";
+      statuscount++;
     };
     if (daysleft>0){
       status="sick";
@@ -83,8 +82,16 @@ public:
     double r = ((double) rand() / (RAND_MAX));
     //if (day<(startdate+s.get_days())){
     ////if (numdaysleft>0){
-    if(r<s.get_transmission() && status=="susceptible"){
+    if(r<s.get_transmission() && statuscount<variantcounter){
       daysleft=s.get_days();
+
+      transmissioncounter++;
+      if (transmissioncounter>=2000){
+	if (variantcounter<3){
+	  variantcounter++;
+	};
+	transmissioncounter=0;
+      };
     };
     //if (r<s.get_transmission()){
     //if (daysleft>0){
@@ -117,18 +124,25 @@ public:
   };
 
   void touch(Person i){    //Disease s
+    Disease s(5,.81);
     if (touchcounter<6){
       touchcounter=touchcounter+1;
       if (i.get_touch_counter()<6){
 	i.update_counter();
       };
-      if(status=="susceptible" && i.status_string()=="sick"){
-	Disease s(5,.81);
+      if(status == "susceptible" && i.status_string()=="sick"){ //|| status=="recovered") statuscount<=i.statuscount){      //status=="susceptible" && i.status_string()=="sick"
+	//Disease s(5,.81);
 	infect(s);
-	//status="sick";
       };
-      if(i.status_string()=="susceptible" && status=="sick"){
-	Disease s(5,.81);    //got to update this
+      if(status == "recovered" && i.status_string()=="sick" && statuscount<i.statuscount){
+	infect(s);
+      };
+      
+      if(status=="sick" && i.status_string()=="susceptible"){        //i.status_string()=="susceptible" && status=="sick"
+	//Disease s(5,.81);    //got to update this
+	i.infect(s);
+      };
+      if(status=="sick" && i.status_string()=="recovered" && i.statuscount<statuscount){
 	i.infect(s);
       };
     };
@@ -257,7 +271,7 @@ int main(){
   //vector<Person> people2=population2.get_people();
   Person& firstperson=people2[0];
   //firstperson=people2[0];
-  Disease flu2(3,.9);
+  Disease flu2(3,1.);
   //////firstperson.infect(flu2);
   //population2.one_more_day();
   //int countnuminfected2=population2.count_infected();
@@ -324,20 +338,20 @@ int main(){
 
 
   //random interations
-  Population population4(10000);
-  double randvac=.1;
+  Population population4(50000);
+  double randvac=.01;
   population4.random_vaccination(randvac);
   cout<<"Number of people vaccinated: "<<population4.count_vaccinated()<<endl;
   vector<Person>& people4=population4.get_people();
   Person& nthperson=people4[11];
-  Disease flu4(5,.85);
+  Disease flu4(10,.9);
 
   //////////////////nthperson.infect(flu4);
   //population4.one_more_day();
   //int countnuminfected4=population4.count_infected();
   //cout<<countnuminfected4<<endl;
   srand(time(0));
-  for (int iter4=0;iter4<40;++iter4){
+  for (int iter4=0;iter4<100;++iter4){
     if (iter4==0){
       nthperson.infect(flu4);
     }else{
@@ -347,7 +361,7 @@ int main(){
       for (Person& indiv:people4){
 	while((indiv.get_touch_counter())<6){ 
 	  //srand(time(0));
-	  int rindex=rand()%10000;
+	  int rindex=rand()%50000;
 	  if (rindex!=indexiter){
 	    indiv.touch(people4[rindex]);    //flu4
 	  };
@@ -363,13 +377,14 @@ int main(){
     for (Person& indivs:people4){
       indivs.reset_touch_counter();
     };
-
+    
 
 
     
     //population4.one_more_day();
   };
-	
+  cout<<variantcounter<<endl;
+  cout<<transmissioncounter<<endl;
     //////population2.one_more_day();
     //////firstperson.infect(flu2);
     //while(population4.peopletouchedceiling()<100)
