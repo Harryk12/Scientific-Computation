@@ -24,27 +24,25 @@ int transmissioncounter=0;
 #include "infect_lib.cc"
 
 int main(){
+  //Incorporating vaccination- randomly vaccinating a number of the population
+    
   Population population(10);
-  double randvacc=.3;
+  double randvacc=.3;                       //percentage to be randomly vaccinated                   
   population.random_vaccination(randvacc);
   cout<<"Number of people vaccinated: "<<population.count_vaccinated()<<endl;
   vector<Person>& people=population.get_people();
-  Person& nthperson=people[0];
+  Person& nthperson=people[0];        //nth person get's infected intially
   Disease flu(3,.9);
-  //int countnuminfected3=population3.count_infected();
-  //cout<<countnuminfected3<<endl;
   for (int iter=0;iter<15;++iter){
-    //population2.one_more_day();
-    //////firstperson.infect(flu2);
     if (iter==0){
-      nthperson.initial_infect(flu);
+      nthperson.initial_infect(flu);  //different function than infect() here with p=1.0 to ensure the sim get's started (first person certainly gets infected)
     } else{
-      for (int p=0;p<people.size();p++){
-	if (people[p].status_string()=="susceptible"){
-	  if (p+1<people.size() && people[p+1].status_string()=="sick"){     
+      for (int p=0;p<people.size();p++){  
+	if (people[p].status_string()=="susceptible"){      //if susceptible person comes in contact with a sick neighbor, they have chance to get infected 
+	  if (p+1<people.size() && people[p+1].status_string()=="sick"){                      //person after is sick     
 	    people[p].infect(flu);
 	  };
-	  if (p>0 && people[p-1].status_string()=="sick"){        
+	  if (p>0 && people[p-1].status_string()=="sick"){                   //person before is sick
 	    people[p].infect(flu);
 	  };
         };

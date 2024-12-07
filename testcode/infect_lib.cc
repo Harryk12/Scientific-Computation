@@ -66,7 +66,7 @@ public:
 
       transmissioncounter++;
       if (transmissioncounter>=20000){
-	if (variantcounter<3){
+	if (variantcounter<1){
 	  variantcounter++;
 	};
 	transmissioncounter=0;
