@@ -26,41 +26,44 @@ int transmissioncounter=0;
 int main(){
   
   //coding random interactions and mutations
-  
-  Population population(50000);  
-  double randvac=.01;    
-  population.random_vaccination(randvac);
-  cout<<"Number of people vaccinated: "<<population.count_vaccinated()<<endl;
-  vector<Person>& people=population.get_people();
-  Person& nthperson=people[11];
-  Disease flu(10,.1);
-  srand(time(0));
-  for (int iter=0;iter<100;++iter){
-    if (iter==0){
-      nthperson.initial_infect(flu);
-    }else{
-      int indexiter=0;
-      for (Person& indiv:people){
-	while((indiv.get_touch_counter())<6){ 
-	  //srand(time(0));
-	  int rindex=rand()%50000;
-	  if (rindex!=indexiter){
-	    indiv.touch(people[rindex]);    
+  for (double vac=0.;vac<.5;vac=vac+.1){
+    for (double transmit=0.;transmit<.5;transmit=transmit+.1){
+      Population population(50000);  
+      double randvac=vac;    
+      population.random_vaccination(randvac);
+      cout<<"Number of people vaccinated: "<<population.count_vaccinated()<<endl;
+      vector<Person>& people=population.get_people();
+      Person& nthperson=people[11];
+      Disease flu(10,transmit);
+      srand(time(0));
+      for (int iter=0;iter<100;++iter){
+	if (iter==0){
+	  nthperson.initial_infect(flu);
+	}else{
+	  int indexiter=0;
+	  for (Person& indiv:people){
+	    while((indiv.get_touch_counter())<6){ 
+	      //srand(time(0));
+	      int rindex=rand()%50000;
+	      if (rindex!=indexiter){
+		indiv.touch(people[rindex],flu);   //,flu    
+	      };
+	    };
+	    indexiter=indexiter+1;
 	  };
 	};
-	indexiter=indexiter+1;
+	population.one_more_day();
+	int countnuminfected=population.count_infected();
+	if (iter>=0){
+	  cout<<"On iteration "<<iter<<" there are "<<countnuminfected<<" infected."<<endl;
+	};
+	for (Person& indivs:people){
+	  indivs.reset_touch_counter();
+	};
       };
-    };
-    population.one_more_day();
-    int countnuminfected=population.count_infected();
-    if (iter>=0){
-      cout<<"On iteration "<<iter<<" there are "<<countnuminfected<<" infected."<<endl;
-    };
-    for (Person& indivs:people){
-      indivs.reset_touch_counter();
+      cout<<variantcounter<<endl;
+      cout<<transmissioncounter<<endl;
     };
   };
-  cout<<variantcounter<<endl;
-  cout<<transmissioncounter<<endl;
   return 0;
 };

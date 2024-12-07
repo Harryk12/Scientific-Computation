@@ -105,8 +105,9 @@ public:
     touchcounter=0;
   };
 
-  void touch(Person i){    //Disease s
-    Disease s(10,.1);
+  void touch(Person i,Disease d){    //,Disease d
+    Disease s=d;
+    //Disease s(10,.5);
     if (touchcounter<6){
       touchcounter=touchcounter+1;
       if (i.get_touch_counter()<6){
