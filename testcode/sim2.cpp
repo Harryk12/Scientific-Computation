@@ -44,9 +44,11 @@ int main(){
     for (Person& indiv:population.get_people()){    
       if (indiv.status_string()=="sick"){
 	cout<<"+ ";     //output sick
-      } else{
-	cout<<"? ";     //output susceptible or healed
-      };
+      }else if(indiv.status_string()=="susceptible"){
+	cout<<"? ";     //output susceptible 
+      }else{
+	cout<<"- ";     //output recovered
+      };	  
     };
     cout<<endl;
     if (iter>3 &&countnuminfected==0){     //outputting end of sickness

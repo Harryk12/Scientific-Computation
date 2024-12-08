@@ -33,7 +33,7 @@ int main(){
   cout<<"Testing how many sick the next day"<<endl;
   Population population(10);
   vector<Person>& people=population.get_people();
-  Person& firstperson=people[4];              //testing how many sick the next day if nth person is sick(should be 2 if 0th or last get sick, three otherwise)
+  Person& firstperson=people[0];              //testing how many sick the next day if nth person is sick(should be 2 if 0th or last get sick, three otherwise)
   Disease flu(3,1.);
   for (int iter=0;iter<20;++iter){
     if (iter==0){                         //day of initial infection
@@ -61,7 +61,7 @@ int main(){
   cout<<"Testing number of days run"<<endl;
   Population population2(10);
   vector<Person>& people2=population2.get_people();
-  Person& firstperson2=people2[4];
+  Person& firstperson2=people2[0];
   Disease flu2(3,1.);
   for (int iter2=0;iter2<20;++iter2){
     if (iter2==0){
@@ -89,7 +89,7 @@ int main(){
   cout<<"Testing when p=.5"<<endl;
   Population population3(10);
   vector<Person>& people3=population3.get_people();
-  Person& firstperson3=people3[4];
+  Person& firstperson3=people3[0];
   Disease flu3(3,.5);       //.5 rate of transmission
   for (int iter3=0;iter3<20;++iter3){
     if (iter3==0){                     //day of initial infection
