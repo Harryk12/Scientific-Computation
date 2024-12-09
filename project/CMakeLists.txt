@@ -29,3 +29,4 @@ add_executable( sim6 ${sim6_source} )
 
 set_target_properties(sim1 sim2 sim3 sim4 sim5 sim6 PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+)

@@ -1,4 +1,4 @@
-//Harry Singh Kang   hsk697   hkangt
+0;10;1c//Harry Singh Kang   hsk697   hkangt
 #include <iostream>
 #include <string>
 #include <vector>
@@ -30,8 +30,8 @@ int main(){
   
   //coding random interactions and iterating over vaccination and transmission rates to evaluate patterns
   
-  for (double vac=0.1;vac<=.1;vac=vac+.1){      //iterating over vaccination rates                                -vary accordingly
-    for (double transmit=0.9;transmit<=.9;transmit=transmit+.1){     //iterating over transmission rates            -vary accordingly
+  for (double vac=0.1;vac<=.2;vac=vac+.1){      //iterating over vaccination rates                                -vary accordingly
+    for (double transmit=0.1;transmit<=.2;transmit=transmit+.1){     //iterating over transmission rates            -vary accordingly
       Population population(50000);  //population size
       double randvac=vac;    
       population.random_vaccination(randvac);          
